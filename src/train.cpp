@@ -1,7 +1,7 @@
 // Copyright 2021 NNTU-CS
 #include "train.h"
 
-Train::Train() : head(nullptr), ops(0) {}
+Train::Train() : head(nullptr), steps(0) {}
 
 void Train::addCar(bool light) {
   Car* node = new Car{light, nullptr, nullptr};
@@ -19,13 +19,12 @@ void Train::addCar(bool light) {
 }
 
 int Train::getOpCount() {
-  return ops;
+  return steps;
 }
 
 int Train::getLength() {
   if (!head) return 0;
 
-  // считаем реальную длину поезда
   int length = 0;
   Car* p = head;
   do {
@@ -33,28 +32,25 @@ int Train::getLength() {
     ++length;
   } while (p != head);
 
-  // проверяем состояние всех лампочек
-  bool everyOff = true;
-  bool everyOn = true;
+  bool allOff = true;
+  bool allOn = true;
   p = head;
   for (int i = 0; i < length; ++i) {
-    if (p->light) everyOff = false;
-    if (!p->light) everyOn = false;
+    if (p->light) allOff = false;
+    if (!p->light) allOn = false;
     p = p->next;
   }
 
-  // устанавливаем количество операций по условию задачи
-  ops = 0;
-  if (everyOff) {
-    ops = 2 * length;
-  } else if (everyOn) {
-    ops = length * (length + 1);
+  steps = 0;
+  if (allOff) {
+    steps = 2 * length;
+  } else if (allOn) {
+    steps = length * (length + 1);
   } else {
-    // случайное состояние — просто проходим по кругу один раз
     p = head;
     do {
       p = p->next;
-      ++ops;
+      ++steps;
     } while (p != head);
   }
 
