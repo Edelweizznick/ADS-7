@@ -3,16 +3,6 @@
 
 Train::Train() : first(nullptr), countOp(0) {}
 
-Train::~Train() {
-  if (!first) return;
-  Car* curr = first;
-  do {
-    Car* nextCar = curr->next;
-    delete curr;
-    curr = nextCar;
-  } while (curr != first);
-}
-
 void Train::addCar(bool light) {
   Car* newCar = new Car{light, nullptr, nullptr};
   if (!first) {
