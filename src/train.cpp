@@ -26,40 +26,26 @@ int Train::getLength() {
 
     countOp = 0;
     Car* base = first;
+    base->light = true;
 
-    if (!base->light) {
-        base->light = true;
-        countOp++;
-    }
-
-    int dist = 1;
-
+    int n = 1;
     while (true) {
-        Car* current = base;
-
-        for (int i = 0; i < dist; ++i) {
-            current = current->next;
+        Car* p = base;
+        for (int i = 0; i < n; ++i) {
+            p = p->next;
             countOp++;
         }
 
-        bool was_on = current->light;
-        current->light = false;
-        countOp++;
+        if (p->light) {
+            return n;
+        }
 
-        for (int i = 0; i < dist; ++i) {
-            current = current->prev;
+        p->light = true;
+
+        for (int i = 0; i < n; ++i) {
+            p = p->prev;
             countOp++;
         }
-
-        if (!base->light) {
-            base->light = true;
-            return dist;
-        }
-
-        if (was_on) {
-            current->light = true;
-        }
-
-        dist++;
+        n++;
     }
 }
