@@ -1,5 +1,8 @@
+// Copyright 2022 NNTU-CS
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <iomanip>
 #include <cstdlib>
 #include <ctime>
 #include "train.h"
@@ -7,45 +10,60 @@
 int main() {
     std::srand(std::time(nullptr));
     
-    std::vector<int> sizes = {10, 20, 30, 50, 75, 100, 150, 200, 250, 300, 400};
+    std::cout << "=== Вычислительный эксперимент: Circular Train ===\n\n";
     
-    std::vector<int> ops_off, ops_on, ops_rand;
+    std::vector<int> sizes = {10, 50, 100, 150, 200, 250, 300, 400, 500};
+    
+    std::ofstream data("result/data.txt");
+    if (data.is_open()) {
+        data << "n AllOff AllOn Random\n";
+    }
+    
+    std::cout << std::setw(6) << "n"
+              << std::setw(12) << "All Off"
+              << std::setw(12) << "All On"
+              << std::setw(12) << "Random" << "\n";
     
     for (int n : sizes) {
-        // 1. Все лампочки выключены
-        Train t1;
-        for (int i = 0; i < n; ++i) t1.addCar(false);
-        t1.getLength();
-        ops_off.push_back(t1.getOpCount());
+        long long off = 0, on = 0, rnd = 0;
         
-        // 2. Все лампочки включены
-        Train t2;
-        for (int i = 0; i < n; ++i) t2.addCar(true);
-        t2.getLength();
-        ops_on.push_back(t2.getOpCount());
-        
-        // 3. Случайное состояние
-        Train t3;
-        for (int i = 0; i < n; ++i) {
-            t3.addCar(std::rand() % 2);
+        // Все выключены
+        {
+            Train t;
+            for (int i = 0; i < n; ++i) t.addCar(false);
+            t.getLength();
+            off = t.getOpCount();
         }
-        t3.getLength();
-        ops_rand.push_back(t3.getOpCount());
+        
+        // Все включены
+        {
+            Train t;
+            for (int i = 0; i < n; ++i) t.addCar(true);
+            t.getLength();
+            on = t.getOpCount();
+        }
+        
+        // Случайное состояние
+        {
+            Train t;
+            for (int i = 0; i < n; ++i) t.addCar(rand() % 2);
+            t.getLength();
+            rnd = t.getOpCount();
+        }
+        
+        std::cout << std::setw(6) << n
+                  << std::setw(12) << off
+                  << std::setw(12) << on
+                  << std::setw(12) << rnd << "\n";
+        
+        if (data.is_open()) {
+            data << n << " " << off << " " << on << " " << rnd << "\n";
+        }
     }
     
-    // Красивый вывод результатов
-    std::cout << "=== Результаты эксперимента ===\n\n";
-    std::cout << "n\tAll Off\tAll On\tRandom\n";
-    std::cout << "--------------------------------\n";
-    
-    for (size_t i = 0; i < sizes.size(); ++i) {
-        std::cout << sizes[i] << "\t" 
-                  << ops_off[i] << "\t" 
-                  << ops_on[i] << "\t" 
-                  << ops_rand[i] << std::endl;
-    }
-    
-    std::cout << "\nГрафик сохранён в result/plot.png\n";
+    std::cout << "\nЭксперимент завершён!\n";
+    std::cout << "Данные сохранены в result/data.txt\n";
+    std::cout << "График сохранён в result/plot.png\n";
     
     return 0;
 }
