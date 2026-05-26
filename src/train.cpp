@@ -1,3 +1,4 @@
+// Copyright 2026 NNTU-CS
 #include "train.h"
 
 Train::Train() {
@@ -23,20 +24,16 @@ void Train::addCar(bool light) {
 
 int Train::getLength() {
     countOp = 0;
-    
     first->light = true;
-    
     Car *current = first->next;
     int length = 1;
     countOp++;
-    
     while (current->light != true) {
         current->light = false;
         current = current->next;
         length++;
         countOp++;
     }
-    
     return length;
 }
 
