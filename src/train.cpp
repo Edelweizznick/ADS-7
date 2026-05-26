@@ -35,22 +35,20 @@ int Train::getLength() {
   if (!first) return 0;
   countOp = 0;
   Car* home = first;
-  home->light = true; // Устанавливаем маркер ON
+  home->light = true;
   int k = 1;
   while (true) {
     Car* curr = home;
-    // Идём вперёд k шагов
     for (int i = 0; i < k; ++i) {
       curr = curr->next;
       countOp++;
     }
-    curr->light = false; // Выключаем
-    // Возвращаемся k шагов
+    curr->light = false;
     for (int i = 0; i < k; ++i) {
       curr = curr->prev;
       countOp++;
     }
-    if (!home->light) { // Если маркер выключен — цикл замкнулся, k = n
+    if (!home->light) {
       return k;
     }
     k++;
