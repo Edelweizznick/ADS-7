@@ -23,35 +23,43 @@ int Train::getOpCount() {
 
 int Train::getLength() {
     if (first == nullptr) return 0;
-    
+
     countOp = 0;
     Car* base = first;
-    if (!base->light) base->light = true;
 
-    int candidate = 1;
-    Car* pos = nullptr;
+    if (!base->light) {
+        base->light = true;
+        countOp++;
+    }
+
+    int dist = 1;
 
     while (true) {
-        candidate++;
-        pos = base;
+        Car* current = base;
 
-        for (int i = 0; i < candidate; ++i) {
-            pos = pos->next;
+        for (int i = 0; i < dist; ++i) {
+            current = current->next;
             countOp++;
         }
 
-        bool wasOff = !pos->light;
-        if (wasOff) {
-            pos->light = true;
-        }
+        bool was_on = current->light;
+        current->light = false;
+        countOp++;
 
-        for (int i = 0; i < candidate; ++i) {
-            pos = pos->prev;
+        for (int i = 0; i < dist; ++i) {
+            current = current->prev;
             countOp++;
         }
 
-        if (!wasOff) {
-            return candidate;
+        if (!base->light) {
+            base->light = true;
+            return dist;
         }
+
+        if (was_on) {
+            current->light = true;
+        }
+
+        dist++;
     }
 }
