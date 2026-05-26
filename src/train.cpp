@@ -1,71 +1,43 @@
 #include "train.h"
 
-Train::Train() : countOp(0), first(nullptr) {}
-
-Train::~Train() {
-    if (first == nullptr) return;
-    Car* current = first->next;
-    while (current != first) {
-        Car* next = current->next;
-        delete current;
-        current = next;
-    }
-    delete first;
+Train::Train() {
+    first = nullptr;
+    countOp = 0;
 }
 
 void Train::addCar(bool light) {
-    Car* car = new Car{light, nullptr, nullptr};
+    Car *newCar = new Car;
+    newCar->light = light;
     if (first == nullptr) {
-        first = car;
-        first->next = first;
-        first->prev = first;
+        newCar->next = newCar;
+        newCar->prev = newCar;
+        first = newCar;
     } else {
-        Car* last = first->prev;
-        last->next = car;
-        car->prev = last;
-        car->next = first;
-        first->prev = car;
+        Car *last = first->prev;
+        newCar->next = first;
+        newCar->prev = last;
+        last->next = newCar;
+        first->prev = newCar;
     }
 }
 
 int Train::getLength() {
-    if (first == nullptr) return 0;
-
     countOp = 0;
-    Car* start = first;
-
-    if (!start->light) {
-        start->light = true;
-        countOp++;
-    }
-
-    Car* current = start->next;
-    countOp++;
-
+    
+    first->light = true;
+    
+    Car *current = first->next;
     int length = 1;
-
-    while (true) {
-        if (current->light) {
-            current = current->next;
-            countOp++;
-
-            if (current == start) {
-                return length;
-            } else {
-                current = current->prev;
-                countOp++;
-            }
-        }
-
-        if (!current->light) {
-            current->light = true;
-            countOp++;
-        }
-
+    countOp++;
+    
+    while (current->light != true) {
+        current->light = false;
         current = current->next;
-        countOp++;
         length++;
+        countOp++;
     }
+    
+    return length;
 }
 
 int Train::getOpCount() {
