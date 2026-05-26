@@ -1,9 +1,9 @@
 // Copyright 2022 NNTU-CS
 #include "train.h"
-#include <iostream>
-#include <random>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <random>
 
 int main() {
   std::ofstream csv("result/data.csv");
@@ -16,19 +16,16 @@ int main() {
   std::bernoulli_distribution d(0.5);
 
   for (int len = 2; len <= 50; len += 2) {
-    // All off
     Train t_off;
     for (int i = 0; i < len; ++i) t_off.addCar(false);
     t_off.getLength();
     int ops_off = t_off.getOpCount();
 
-    // All on
     Train t_on;
     for (int i = 0; i < len; ++i) t_on.addCar(true);
     t_on.getLength();
     int ops_on = t_on.getOpCount();
 
-    // Random
     Train t_rand;
     for (int i = 0; i < len; ++i) t_rand.addCar(d(gen));
     t_rand.getLength();
