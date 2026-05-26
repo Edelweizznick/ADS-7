@@ -1,3 +1,4 @@
+// Copyright 2021 NNTU-CS
 #include "train.h"
 
 Train::Train() : first(nullptr), countOp(0) {}
@@ -27,7 +28,7 @@ void Train::addCar(bool light) {
   }
 }
 
-int Train::getOpCount() const {
+int Train::getOpCount() {
   return countOp;
 }
 
@@ -43,12 +44,13 @@ int Train::getLength() {
       curr = curr->next;
       countOp++;
     }
+    bool turnedOffMarker = (curr == home);
     curr->light = false;
     for (int i = 0; i < k; ++i) {
       curr = curr->prev;
       countOp++;
     }
-    if (!home->light) {
+    if (turnedOffMarker) {
       return k;
     }
     k++;
