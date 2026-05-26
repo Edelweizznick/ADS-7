@@ -26,7 +26,6 @@ int Train::getLength() {
   if (!first) return 0;
   countOp = 0;
   Car* home = first;
-  home->light = true;
   int k = 1;
   while (true) {
     Car* curr = home;
@@ -34,13 +33,13 @@ int Train::getLength() {
       curr = curr->next;
       countOp++;
     }
-    bool turnedOffMarker = (curr == home);
+    bool isHome = (curr == home);
     curr->light = false;
     for (int i = 0; i < k; ++i) {
       curr = curr->prev;
       countOp++;
     }
-    if (turnedOffMarker) {
+    if (isHome) {
       return k;
     }
     k++;
