@@ -1,4 +1,3 @@
-// Copyright 2022 NNTU-CS
 #include <iostream>
 #include <fstream>
 #include <random>
@@ -39,6 +38,6 @@ int main() {
   }
 
   dataFile.close();
-  std::cout << "Эксперимент завершён. Данные сохранены в data.csv (в корне проекта)\n";
+  std::cout << "Эксперимент завершён. Данные сохранены в data.csv\n";
   return 0;
 }
