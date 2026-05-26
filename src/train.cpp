@@ -24,12 +24,12 @@ void Train::addCar(bool light) {
 
 int Train::getLength() {
     countOp = 0;
-    first->light = false;
-    Car *current = first->next;
     int length = 1;
+    first->light = !first->light;
+    Car *current = first->next;
     countOp++;
-    while (current->light != false) {
-        current->light = true;
+    while (current->light != first->light) {
+        current->light = !current->light;
         current = current->next;
         length++;
         countOp++;
