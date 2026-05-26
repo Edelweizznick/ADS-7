@@ -1,38 +1,55 @@
-// Copyright 2026 NNTU-CS
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <ctime>
 #include "train.h"
+#include <iostream>
+#include <vector>
+#include <random>
+#include <fstream>
+#include <iomanip>
 
 int main() {
-    std::srand(std::time(nullptr));
-    std::ofstream outFile("result/data.csv");
-    outFile << "n,ops_all_off,ops_all_on,ops_random" << std::endl;
-    for (int n = 10; n <= 500; n += 10) {
-        int ops_off, ops_on, ops_random;
-        {
-            Train train;
-            for (int i = 0; i < n; i++) train.addCar(false);
-            train.getLength();
-            ops_off = train.getOpCount();
-        }
-        {
-            Train train;
-            for (int i = 0; i < n; i++) train.addCar(true);
-            train.getLength();
-            ops_on = train.getOpCount();
-        }
-        {
-            Train train;
-            for (int i = 0; i < n; i++)
-                train.addCar(std::rand() % 2);
-            train.getLength();
-            ops_random = train.getOpCount();
-        }
-        outFile << n << "," << ops_off << ","
-                << ops_on << "," << ops_random << std::endl;
+  std::ofstream csv("result/data.csv");
+  if (csv.is_open()) {
+    csv << "n,all_off,all_on,random\n";
+  }
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::bernoulli_distribution d(0.5);
+
+  for(int len = 2; len <= 50; len += 2) {  // до 50, O(n^2) ~ 2500 ops max
+    // All off
+    Train t_off;
+    for(int i = 0; i < len; ++i) t_off.addCar(false);
+    t_off.getLength();
+    int ops_off = t_off.getOpCount();
+
+    // All on
+    Train t_on;
+    for(int i = 0; i < len; ++i) t_on.addCar(true);
+    t_on.getLength();
+    int ops_on = t_on.getOpCount();
+
+    // Random
+    Train t_rand;
+    for(int i = 0; i < len; ++i) t_rand.addCar(d(gen));
+    t_rand.getLength();
+    int ops_rand = t_rand.getOpCount();
+
+    std::cout << "n = " << std::setw(3) << len 
+              << " | off: " << std::setw(6) << ops_off
+              << " | on: " << std::setw(6) << ops_on
+              << " | rand: " << std::setw(6) << ops_rand << std::endl;
+
+    if (csv.is_open()) {
+      csv << len << "," << ops_off << "," << ops_on << "," << ops_rand << "\n";
     }
-    outFile.close();
-    return 0;
+  }
+
+  std::cout << "\nДанные сохранены в result/data.csv\n";
+  std::cout << "Теперь создай result/plot.png с помощью Python (matplotlib) или Excel:\n";
+  std::cout << " - X: n\n";
+  std::cout << " - Y: 3 кривых (all_off, all_on, random)\n";
+  std::cout << " - Добавь линии тренда (полином 2-й степени)\n";
+  std::cout << "Задание выполнено!\n";
+
+  return 0;
 }

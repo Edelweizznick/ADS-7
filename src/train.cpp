@@ -1,43 +1,58 @@
-// Copyright 2026 NNTU-CS
 #include "train.h"
 
-Train::Train() {
-    first = nullptr;
-    countOp = 0;
+Train::Train() : first(nullptr), countOp(0) {}
+
+Train::~Train() {
+  if (!first) return;
+  Car* curr = first;
+  do {
+    Car* nextCar = curr->next;
+    delete curr;
+    curr = nextCar;
+  } while (curr != first);
 }
 
 void Train::addCar(bool light) {
-    Car *newCar = new Car;
-    newCar->light = light;
-    if (first == nullptr) {
-        newCar->next = newCar;
-        newCar->prev = newCar;
-        first = newCar;
-    } else {
-        Car *last = first->prev;
-        newCar->next = first;
-        newCar->prev = last;
-        last->next = newCar;
-        first->prev = newCar;
-    }
+  Car* newCar = new Car{light, nullptr, nullptr};
+  if (!first) {
+    first = newCar;
+    first->next = first;
+    first->prev = first;
+  } else {
+    Car* last = first->prev;
+    last->next = newCar;
+    newCar->prev = last;
+    newCar->next = first;
+    first->prev = newCar;
+  }
+}
+
+int Train::getOpCount() const {
+  return countOp;
 }
 
 int Train::getLength() {
-    countOp = 0;
-    int length = 1;
-    first->light = !first->light;
-    Car *current = first->next;
-    countOp++;
-    while (current->light != first->light) {
-        current->light = !current->light;
-        current = current->next;
-        length++;
-        countOp++;
+  if (!first) return 0;
+  countOp = 0;
+  Car* home = first;
+  home->light = true; // Устанавливаем маркер ON
+  int k = 1;
+  while (true) {
+    Car* curr = home;
+    // Идём вперёд k шагов
+    for (int i = 0; i < k; ++i) {
+      curr = curr->next;
+      countOp++;
     }
-    countOp += length;
-    return length;
-}
-
-int Train::getOpCount() {
-    return countOp;
+    curr->light = false; // Выключаем
+    // Возвращаемся k шагов
+    for (int i = 0; i < k; ++i) {
+      curr = curr->prev;
+      countOp++;
+    }
+    if (!home->light) { // Если маркер выключен — цикл замкнулся, k = n
+      return k;
+    }
+    k++;
+  }
 }
